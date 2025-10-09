@@ -5,6 +5,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.pipeline import Pipeline
 import pickle
+from datetime import datetime
 from config import config
 
 class EmailClassifier:
@@ -231,7 +232,7 @@ class EmailClassifier:
         feedback_data['feedback'].append({
             'text': text,
             'correct_label': correct_classification,
-            'timestamp': str(pd.Timestamp.now())
+            'timestamp': str(datetime.now())
         })
 
         config.save_encrypted_json("classifier_feedback", feedback_data)

@@ -73,6 +73,8 @@ temp/
 *.db
 *.sqlite
 *.sqlite3
+*.db-shm
+*.db-wal
 
 # Backup Files
 *.bak
@@ -94,3 +96,6 @@ docs/_build/
 
 # Local Configuration
 config.local.py
+
+# Claude Code
+.claude/

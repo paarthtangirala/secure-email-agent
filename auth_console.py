@@ -1,7 +1,5 @@
 import os
 import json
-import signal
-import threading
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -9,20 +7,13 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from config import config
 
-class TimeoutError(Exception):
-    pass
-
-def timeout_handler(signum, frame):
-    raise TimeoutError("OAuth authentication timed out")
-
-class GoogleAuth:
+class GoogleAuthConsole:
     def __init__(self):
         self.gmail_service = None
         self.calendar_service = None
-        self.oauth_timeout = 120  # 2 minutes timeout
 
     def authenticate(self):
-        """Authenticate with Google APIs using OAuth2"""
+        """Authenticate with Google APIs using console-based OAuth2"""
         # Load existing credentials
         creds = None
         token_data = config.load_encrypted_json("token")
@@ -37,9 +28,11 @@ class GoogleAuth:
         if not creds or not creds.valid:
             if creds and creds.expired and creds.refresh_token:
                 try:
+                    print("🔄 Refreshing expired token...")
                     creds.refresh(Request())
+                    print("✅ Token refreshed successfully")
                 except Exception as e:
-                    print(f"Token refresh failed: {e}")
+                    print(f"❌ Token refresh failed: {e}")
                     creds = None
 
             if not creds:
@@ -49,44 +42,49 @@ class GoogleAuth:
                         f"and save it as {config.credentials_file}"
                     )
 
-                flow = InstalledAppFlow.from_client_secrets_file(
-                    str(config.credentials_file),
-                    config.gmail_scopes + config.calendar_scopes
-                )
-
                 print("🔐 Starting OAuth authentication...")
-                print("💡 Using local server authentication")
+                print("💡 Using console-based authentication (no browser required)")
 
                 flow = InstalledAppFlow.from_client_secrets_file(
                     str(config.credentials_file),
                     config.gmail_scopes + config.calendar_scopes
                 )
 
-                print("\n📋 OAuth Instructions:")
-                print("1. A browser window will open automatically")
-                print("2. Complete the Google authorization process")
-                print("3. The browser will redirect and complete authentication")
-                print("\nStarting authentication...")
+                print("\n📋 Please follow these steps:")
+                print("1. Copy the URL that will be displayed below")
+                print("2. Open it in your web browser")
+                print("3. Complete the authorization process")
+                print("4. Copy the authorization code from the browser")
+                print("5. Paste it back here when prompted")
+                print("\nPress Enter to continue...")
+                input()
 
                 try:
-                    # Try local server first (should work with http://localhost:8080/)
-                    creds = flow.run_local_server(port=8080, host='localhost', open_browser=True)
-                    print("✅ Local server OAuth successful!")
-
+                    creds = flow.run_console()
+                    print("✅ Console OAuth successful!")
                 except Exception as e:
-                    print(f"❌ Local server OAuth failed: {e}")
-                    print("\n🔧 Troubleshooting:")
-                    print("1. Make sure http://localhost:8080/ is added to your Google Cloud Console redirect URIs")
-                    print("2. Check that no other application is using port 8080")
-                    print("3. Try a different port or manual authentication")
+                    print(f"❌ Console OAuth failed: {e}")
+                    print("\nTroubleshooting tips:")
+                    print("1. Make sure you copied the entire URL")
+                    print("2. Ensure you're logged into the correct Google account")
+                    print("3. Check that the authorization code is complete")
+                    print("4. Verify the redirect URI includes: urn:ietf:wg:oauth:2.0:oob")
                     raise
 
             # Save the credentials for the next run (encrypted)
             config.save_encrypted_json("token", json.loads(creds.to_json()))
+            print("💾 Credentials saved securely")
 
         # Build services
-        self.gmail_service = build('gmail', 'v1', credentials=creds)
-        self.calendar_service = build('calendar', 'v3', credentials=creds)
+        try:
+            print("🔗 Building Gmail service...")
+            self.gmail_service = build('gmail', 'v1', credentials=creds)
+            print("🔗 Building Calendar service...")
+            self.calendar_service = build('calendar', 'v3', credentials=creds)
+            print("✅ Services created successfully")
+        except Exception as e:
+            print(f"❌ Failed to build services: {e}")
+            raise
 
         return True
 

@@ -15,13 +15,35 @@ class SecureConfig:
         self.encryption_key = self._get_or_create_encryption_key()
         self.cipher = Fernet(self.encryption_key)
 
-        # OAuth scopes
+        # OAuth scopes - minimal permissions
         self.gmail_scopes = ['https://www.googleapis.com/auth/gmail.readonly']
-        self.calendar_scopes = ['https://www.googleapis.com/auth/calendar']
+        self.calendar_scopes = ['https://www.googleapis.com/auth/calendar.events']
 
         # API credentials paths
         self.credentials_file = self.data_dir / "credentials.json"
         self.token_file = self.data_dir / "token.json"
+
+        # Fast-Path → Smart-Path Configuration
+        self.DEFAULT_TONE = "professional"
+        self.SIGNATURE = "— Your Assistant"
+        self.BUSINESS_HOURS = "09:00-17:00"
+        self.MEETING_DEFAULT_DURATION_MIN = 30
+        self.AUTO_CC = []
+        self.AUTO_BCC = []
+        self.OPENAI_MODEL = "gpt-3.5-turbo"
+
+        # Circuit breaker settings
+        self.OPENAI_TIMEOUT_SECONDS = 5.0
+        self.OPENAI_MAX_LATENCY_MS = 800
+        self.CIRCUIT_BREAKER_WINDOW = 10  # Number of calls to track
+
+        # Privacy settings
+        self.LOG_EMAIL_BODIES = False  # Never log raw email content
+        self.DEBUG_MODE = False
+
+        # Performance targets
+        self.FAST_PATH_TARGET_MS = 100
+        self.SMART_PATH_TARGET_MS = 900
 
     def _get_or_create_encryption_key(self):
         """Get encryption key from secure storage or create new one"""
