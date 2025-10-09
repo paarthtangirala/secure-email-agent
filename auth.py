@@ -7,7 +7,11 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
+from dotenv import load_dotenv
 from config import config
+
+# Load environment variables
+load_dotenv()
 
 class TimeoutError(Exception):
     pass
@@ -19,7 +23,7 @@ class GoogleAuth:
     def __init__(self):
         self.gmail_service = None
         self.calendar_service = None
-        self.oauth_timeout = 120  # 2 minutes timeout
+        self.oauth_timeout = int(os.getenv('OAUTH_TIMEOUT_SECONDS', '120'))  # Configurable timeout
 
     def authenticate(self):
         """Authenticate with Google APIs using OAuth2"""
@@ -69,15 +73,19 @@ class GoogleAuth:
                 print("\nStarting authentication...")
 
                 try:
-                    # Try local server first (should work with http://localhost:8080/)
-                    creds = flow.run_local_server(port=8080, host='localhost', open_browser=True)
+                    # Try local server first (configurable port and host)
+                    oauth_port = int(os.getenv('OAUTH_REDIRECT_PORT', '8080'))
+                    oauth_host = os.getenv('OAUTH_REDIRECT_HOST', 'localhost')
+                    creds = flow.run_local_server(port=oauth_port, host=oauth_host, open_browser=True)
                     print("✅ Local server OAuth successful!")
 
                 except Exception as e:
+                    oauth_port = os.getenv('OAUTH_REDIRECT_PORT', '8080')
+                    oauth_host = os.getenv('OAUTH_REDIRECT_HOST', 'localhost')
                     print(f"❌ Local server OAuth failed: {e}")
                     print("\n🔧 Troubleshooting:")
-                    print("1. Make sure http://localhost:8080/ is added to your Google Cloud Console redirect URIs")
-                    print("2. Check that no other application is using port 8080")
+                    print(f"1. Make sure http://{oauth_host}:{oauth_port}/ is added to your Google Cloud Console redirect URIs")
+                    print(f"2. Check that no other application is using port {oauth_port}")
                     print("3. Try a different port or manual authentication")
                     raise
 

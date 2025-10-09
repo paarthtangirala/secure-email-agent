@@ -4,10 +4,15 @@ Robust test script for the instant email agent
 Tests all major functionality with proper error handling
 """
 
+import os
 import requests
 import json
 import time
 from typing import Dict, List
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 def test_api_endpoint(url: str, description: str) -> Dict:
     """Test an API endpoint with proper error handling"""
@@ -51,7 +56,9 @@ def test_api_endpoint(url: str, description: str) -> Dict:
 
 def run_instant_agent_tests():
     """Run comprehensive tests on the instant email agent"""
-    base_url = "http://127.0.0.1:8502"
+    host = os.getenv('TEST_HOST', '127.0.0.1')
+    port = os.getenv('TEST_PORT', '8502')
+    base_url = f"http://{host}:{port}"
 
     print("🧪 INSTANT EMAIL AGENT - COMPREHENSIVE TESTING")
     print("=" * 55)
@@ -70,7 +77,7 @@ def run_instant_agent_tests():
         },
         {
             "name": "Instant Response Generation",
-            "url": f"{base_url}/api/reply-suggestions?message_id=192736c46228737a&tone=professional",
+            "url": f"{base_url}/api/reply-suggestions?message_id={os.getenv('TEST_EMAIL_ID', '192736c46228737a')}&tone=professional",
             "check_fields": ["fast", "generation_time_ms"]
         }
     ]
@@ -131,7 +138,10 @@ def test_instant_response_performance():
     print("\n⚡ PERFORMANCE TESTING - Instant Response Generation")
     print("=" * 55)
 
-    url = "http://127.0.0.1:8502/api/reply-suggestions?message_id=192736c46228737a&tone=professional"
+    host = os.getenv('TEST_HOST', '127.0.0.1')
+    port = os.getenv('TEST_PORT', '8502')
+    email_id = os.getenv('TEST_EMAIL_ID', '192736c46228737a')
+    url = f"http://{host}:{port}/api/reply-suggestions?message_id={email_id}&tone=professional"
 
     times = []
     for i in range(5):

@@ -4,6 +4,7 @@ Simple Email Agent - Loads past 10 days emails and generates instant responses
 No database, just Gmail API + OpenAI API
 """
 
+import os
 import time
 import json
 import re
@@ -13,8 +14,12 @@ from fastapi import FastAPI
 from fastapi.responses import HTMLResponse, JSONResponse
 import uvicorn
 import openai
+from dotenv import load_dotenv
 from auth import GoogleAuth
 from config import config
+
+# Load environment variables
+load_dotenv()
 
 app = FastAPI(title="Simple Email Agent", version="1.0.0")
 
@@ -43,7 +48,7 @@ class SimpleEmailAgent:
             result = service.users().messages().list(
                 userId='me',
                 q=query,
-                maxResults=20  # Limit to 20 most recent for faster processing
+                maxResults=int(os.getenv('EMAIL_MAX_RESULTS', '20'))  # Configurable via environment
             ).execute()
             
             messages = result.get('messages', [])
@@ -176,13 +181,13 @@ class SimpleEmailAgent:
                 """
                 
                 response = openai.chat.completions.create(
-                    model="gpt-3.5-turbo",
+                    model=os.getenv('OPENAI_MODEL', 'gpt-3.5-turbo'),
                     messages=[
                         {"role": "system", "content": f"You are a helpful email assistant specializing in {style['tone']} responses."},
                         {"role": "user", "content": prompt}
                     ],
-                    max_tokens=200,
-                    temperature=0.8
+                    max_tokens=int(os.getenv('MAX_RESPONSE_TOKENS', '200')),
+                    temperature=float(os.getenv('RESPONSE_TEMPERATURE', '0.8'))
                 )
                 
                 responses.append({
@@ -190,7 +195,7 @@ class SimpleEmailAgent:
                     'response': response.choices[0].message.content.strip(),
                     'type': style['type'],
                     'tone': style['tone'],
-                    'model': 'gpt-3.5-turbo'
+                    'model': os.getenv('OPENAI_MODEL', 'gpt-3.5-turbo')
                 })
                 
             except Exception as e:
@@ -335,11 +340,11 @@ class SimpleEmailAgent:
                 'description': f"Created from email\n\n{description}",
                 'start': {
                     'dateTime': start_time.isoformat(),
-                    'timeZone': 'America/Los_Angeles',
+                    'timeZone': os.getenv('CALENDAR_TIMEZONE', 'America/Los_Angeles'),
                 },
                 'end': {
                     'dateTime': end_time.isoformat(),
-                    'timeZone': 'America/Los_Angeles',
+                    'timeZone': os.getenv('CALENDAR_TIMEZONE', 'America/Los_Angeles'),
                 },
                 'attendees': [],
                 'reminders': {
@@ -773,7 +778,7 @@ async def get_emails_with_responses():
         print("🚀 Starting simple email agent...")
         
         # Get recent emails
-        emails = agent.get_recent_emails(days=10)
+        emails = agent.get_recent_emails(days=int(os.getenv('EMAIL_FETCH_DAYS', '10')))
         
         if not emails:
             return JSONResponse({
@@ -792,8 +797,8 @@ async def get_emails_with_responses():
             email['ai_responses'] = responses_data
             email['response_success'] = all(r['success'] for r in responses_data)
             
-            # Reduced delay for faster processing
-            time.sleep(0.2)  # Faster processing while respecting rate limits
+            # Configurable delay for processing
+            time.sleep(float(os.getenv('EMAIL_PROCESSING_DELAY_SECONDS', '0.2')))  # Respecting rate limits
         
         print("✅ All responses generated!")
         
@@ -835,8 +840,12 @@ async def create_calendar_event_endpoint(request: dict):
         })
 
 if __name__ == "__main__":
-    print("🚀 Starting Simple Email Agent...")
-    print("📧 Fetches past 10 days emails + generates AI responses")
-    print("🌐 Web interface: http://127.0.0.1:8502")
+    host = os.getenv('HOST', '127.0.0.1')
+    port = int(os.getenv('PORT', '8502'))
+    log_level = os.getenv('DEV_LOG_LEVEL', 'info')
     
-    uvicorn.run(app, host="127.0.0.1", port=8502, log_level="info")
+    print("🚀 Starting Simple Email Agent...")
+    print(f"📧 Fetches past {os.getenv('EMAIL_FETCH_DAYS', '10')} days emails + generates AI responses")
+    print(f"🌐 Web interface: http://{host}:{port}")
+    
+    uvicorn.run(app, host=host, port=port, log_level=log_level)

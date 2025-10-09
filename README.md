@@ -103,7 +103,20 @@ python --version
 pip install -r requirements.txt
 ```
 
-### **2. Google API Setup**
+### **2. Environment Configuration**
+```bash
+# Copy the environment template
+cp .env.template .env
+
+# Edit with your actual values
+nano .env  # or use your preferred editor
+```
+
+**Required variables to configure:**
+- `OPENAI_API_KEY`: Your OpenAI API key from https://platform.openai.com/api-keys
+- `GOOGLE_CREDENTIALS_FILE`: Path to your Google OAuth credentials JSON file
+
+### **3. Google API Setup**
 1. **Create Google Cloud Project** at [Google Cloud Console](https://console.cloud.google.com)
 2. **Enable APIs**:
    - Gmail API
@@ -112,28 +125,19 @@ pip install -r requirements.txt
    - Go to "Credentials" → "Create Credentials" → "OAuth 2.0 Client ID"
    - Application type: "Desktop Application"
    - Download the JSON file
-4. **Place credentials** in your project folder as `credentials.json`
-
-### **3. OpenAI API Setup**
-```bash
-# Run the setup script
-python setup_openai.py
-
-# Choose option 2 to add your API key
-# Get your key from: https://platform.openai.com/api-keys
-```
+4. **Place credentials** in your project folder as `credentials.json` (or update `GOOGLE_CREDENTIALS_FILE` in .env)
 
 ### **4. First Run**
 ```bash
 # Start the application
 python simple_email_agent.py
 
-# Open in browser
-http://127.0.0.1:8502
-
+# Open in browser (default: http://127.0.0.1:8502)
 # Complete OAuth authentication when prompted
 # Click "Refresh & Generate Responses"
 ```
+
+**📋 For detailed environment setup:** See [ENVIRONMENT_SETUP.md](ENVIRONMENT_SETUP.md)
 
 ## 🎨 **Screenshots & Features**
 

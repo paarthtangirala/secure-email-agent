@@ -32,6 +32,9 @@ ENV/
 .env
 .env.local
 .env.*.local
+.env.production
+.env.development
+.env.test
 
 # Encrypted Data Directory (contains sensitive encrypted files)
 encrypted_data/
