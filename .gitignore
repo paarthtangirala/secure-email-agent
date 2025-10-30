@@ -102,3 +102,16 @@ config.local.py
 
 # Claude Code
 .claude/
+
+# Legacy backup files (cleaned up old code)
+legacy_backup/
+
+# Frontend build
+frontend/build/
+frontend/node_modules/
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+
+# Performance cache
+performance_cache.db*
