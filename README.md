@@ -1,22 +1,25 @@
-# 🤖 AI Email Assistant with Calendar Integration
+# 🎯 MailMaestro - AI Email Assistant
 
-> **Intelligent Email Management with 5 AI Response Styles + One-Click Calendar Events**  
-> Beautiful glassmorphism UI, fast Gmail sync, and smart meeting detection - all running locally!
+> **Production-Ready AI Email Assistant with Real-Time Gmail Integration**  
+> Modern React + TypeScript frontend, FastAPI backend, and intelligent email processing - all running locally!
 
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://python.org)
+[![React](https://img.shields.io/badge/React-18-blue.svg)](https://reactjs.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-Latest-blue.svg)](https://typescriptlang.org)
 [![FastAPI](https://img.shields.io/badge/FastAPI-Latest-green.svg)](https://fastapi.tiangolo.com)
+[![Material-UI](https://img.shields.io/badge/Material--UI-v6-blue.svg)](https://mui.com)
 [![Gmail API](https://img.shields.io/badge/Gmail%20API-Integrated-red.svg)](https://developers.google.com/gmail/api)
-[![Calendar API](https://img.shields.io/badge/Calendar%20API-Integrated-blue.svg)](https://developers.google.com/calendar/api)
-[![OpenAI](https://img.shields.io/badge/OpenAI-GPT--3.5--turbo-orange.svg)](https://openai.com)
+[![OpenAI](https://img.shields.io/badge/OpenAI-GPT--4-orange.svg)](https://openai.com)
 
-## ✨ **What Makes This Special**
+## ✨ **What Makes MailMaestro Special**
 
-🎯 **5 AI Response Styles** - Get Professional, Friendly, Quick, Detailed, and Action-Oriented responses for every email  
-📅 **Smart Calendar Integration** - Automatically detects meetings and creates calendar events with one click  
-🎨 **Beautiful Modern UI** - Glassmorphism design with smooth animations and responsive layout  
-⚡ **Lightning Fast** - Process 20 emails with 100 AI responses in under 30 seconds  
-🔒 **Privacy-First** - All processing happens locally, encrypted credential storage  
-📧 **Gmail Integration** - Direct OAuth integration, no email storage required  
+🎯 **AI-Powered Email Intelligence** - Smart classification, task extraction, and thread summarization  
+📱 **Modern Web Interface** - React + TypeScript with Material-UI v6 components  
+⚡ **Real-Time Gmail Integration** - Direct API access, no database required (past 10 days)  
+🔒 **Privacy-First Architecture** - Local processing, PII detection, secure credential management  
+📧 **Smart Reply Generation** - Multiple AI response styles with context awareness  
+📅 **Calendar Integration** - Automatic meeting detection and calendar event creation  
+🚀 **Production Ready** - Comprehensive error handling, logging, and scalable architecture  
 
 ## 🚀 **Quick Start**
 
